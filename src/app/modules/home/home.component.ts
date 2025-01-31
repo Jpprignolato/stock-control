@@ -1,6 +1,9 @@
 import { ParseSourceFile } from '@angular/compiler';
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { SignupUserResponse } from 'src/app/models/interfaces/user/SignupUserResponse';
+import { SignupUserRequest } from 'src/app/models/interfaces/user/SignupUserRequest';
+import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
   selector: 'app-home',
@@ -21,13 +24,24 @@ export class HomeComponent {
     password: ['', Validators.required],
   })
 
-  constructor(private formBuilder: FormBuilder) {}
+  constructor(private formBuilder: FormBuilder, private userService: UserService) { }
 
-    onSubmitLoginForm() : void {
-      console.log("Dados do formulário de login", this.loginForm.value);
-    }
+  onSubmitLoginForm(): void {
 
-    onSubmitSignupForm() : void {
-      console.log("Dados do formulário de cadastro", this.signupForm.value);
+  }
+
+  onSubmitSignupForm(): void {
+    if (this.signupForm.value && this.signupForm.valid) {
+      this.userService
+        .signupUser(this.signupForm.value as SignupUserRequest)
+        .subscribe({
+          next: (response) => {
+            if (response) {
+              alert('Usuário teste cadastrado com sucesso!');
+            }
+          },
+          error: (err) => console.log(err),
+        });
     }
+  }
 }
