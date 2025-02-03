@@ -1,9 +1,11 @@
+import { CookieService } from 'ngx-cookie-service';
 import { ParseSourceFile } from '@angular/compiler';
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { SignupUserResponse } from 'src/app/models/interfaces/user/SignupUserResponse';
 import { SignupUserRequest } from 'src/app/models/interfaces/user/SignupUserRequest';
 import { UserService } from 'src/app/services/user/user.service';
+import { AuthRequest } from 'src/app/models/interfaces/user/auth/AuthRequest';
 
 @Component({
   selector: 'app-home',
@@ -24,10 +26,24 @@ export class HomeComponent {
     password: ['', Validators.required],
   })
 
-  constructor(private formBuilder: FormBuilder, private userService: UserService) { }
+  constructor(
+    private formBuilder: FormBuilder,
+    private userService: UserService,
+    private cookieService: CookieService
+    ) {}
 
   onSubmitLoginForm(): void {
-
+    if(this.loginForm.value && this.loginForm.valid) {
+      this.userService.authUser(this.loginForm.value as AuthRequest).subscribe({
+        next: (response) => {
+          if(response) {
+            this.cookieService.set('USER_INFO', response?.token);
+            this.loginForm.reset();
+          }
+        },
+        error: (err) => console.log(err),
+      });
+    }
   }
 
   onSubmitSignupForm(): void {
@@ -38,6 +54,8 @@ export class HomeComponent {
           next: (response) => {
             if (response) {
               alert('Usuário teste cadastrado com sucesso!');
+              this.signupForm.reset();
+              this.loginCard = true;
             }
           },
           error: (err) => console.log(err),
