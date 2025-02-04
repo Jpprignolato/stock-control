@@ -12,6 +12,12 @@
   }
 }
 
+@media scree and (max-width: 1000px) {
+  .grid {
+    height: 100vmax;
+  }
+}
+
 .flex
 {
   cursor: pointer;

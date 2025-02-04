@@ -6,6 +6,7 @@ import { SignupUserRequest } from 'src/app/models/interfaces/user/SignupUserRequ
 import { UserService } from 'src/app/services/user/user.service';
 import { AuthRequest } from 'src/app/models/interfaces/user/auth/AuthRequest';
 import { MessageService } from 'primeng/api';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -30,7 +31,8 @@ export class HomeComponent {
     private formBuilder: FormBuilder,
     private userService: UserService,
     private cookieService: CookieService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private router: Router
     ) {}
 
   onSubmitLoginForm(): void {
@@ -40,12 +42,13 @@ export class HomeComponent {
           if(response) {
             this.cookieService.set('USER_INFO', response?.token);
             this.loginForm.reset();
+            this.router.navigate(['/dashboard']);
 
             this.messageService.add({
               severity: 'success',
               summary: 'Login realizado com sucesso',
               detail: `Bem-vindo de volta! ${response?.name}`,
-              life: 2000,
+              life: 3000,
             });
           }
         },
@@ -54,7 +57,7 @@ export class HomeComponent {
             severity: 'error',
             summary: 'Erro',
             detail: 'Erro ao fazer o login',
-            life: 2000,
+            life: 3000,
           });
           console.log(err);
         },
@@ -75,7 +78,7 @@ export class HomeComponent {
                 severity: 'success',
                 summary: 'Sucesso',
                 detail: 'Usuário Criado com sucesso!',
-                life: 2000,
+                life: 3000,
               });
             }
           },
@@ -84,7 +87,7 @@ export class HomeComponent {
               severity: 'error',
               summary: 'Erro',
               detail: 'Erro ao criar Usuário',
-              life: 2000,
+              life: 3000,
             });
             console.log(err);
           },
