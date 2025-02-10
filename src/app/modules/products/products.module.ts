@@ -19,7 +19,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 
 import { SharedModule } from 'src/app/shared/shared.module';
-import { ProductsHomeComponent } from './products-home/products-home.component';
+import { ProductsHomeComponent } from './pages/products-home/products-home.component';
 import { PRODUCTS_ROUTES } from './products.routing';
 import { ProductsTableComponent } from './components/products-table/products-table.component';
 
