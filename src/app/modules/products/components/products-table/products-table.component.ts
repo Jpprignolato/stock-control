@@ -23,4 +23,9 @@ export class ProductsTableComponent {
       this.productEvent.emit(productEventData);
     }
   }
+  handleDeleteProduct(product_id: string, productname: string): void {}
+
+
+
+  
 }
