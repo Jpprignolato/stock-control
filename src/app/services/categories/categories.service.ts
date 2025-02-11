@@ -6,21 +6,24 @@ import { GetCategoriesResponse } from 'src/app/models/interfaces/categories/resp
 import { environment } from 'src/environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CategoriesService {
   private API_URL = environment.API_URL;
   private JWT_TOKEN = this.cookie.get('USER_INFO');
-  private httOptions =  {
+  private httpOptions = {
     headers: new HttpHeaders({
-      'Content-Type': 'aplication/json',
-      Authorization: `Bearer ${this.JWT_TOKEN}`
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${this.JWT_TOKEN}`,
     }),
   };
 
-  constructor(private http: HttpClient, private cookie: CookieService) { }
+  constructor(private http: HttpClient, private cookie: CookieService) {}
 
   getAllCategories(): Observable<Array<GetCategoriesResponse>> {
-    return this.http.get<Array<GetCategoriesResponse>>(`${this.API_URL}/categories`, this.httOptions);
+    return this.http.get<Array<GetCategoriesResponse>>(
+      `${this.API_URL}/categories`,
+      this.httpOptions
+    );
   }
 }
