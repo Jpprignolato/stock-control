@@ -1,5 +1,6 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit} from '@angular/core';
 import { ProductEvent } from 'src/app/models/enums/products/ProductEvent';
+import { DeleteProductAction } from 'src/app/models/interfaces/products/event/DeleteProductAction';
 import { EventAction } from 'src/app/models/interfaces/products/event/EventAction';
 import { GetAllProductsResponse } from 'src/app/models/interfaces/products/response/GetAllProductsResponse';
 
@@ -8,9 +9,11 @@ import { GetAllProductsResponse } from 'src/app/models/interfaces/products/respo
   templateUrl: './products-table.component.html',
   styleUrls: [],
 })
-export class ProductsTableComponent {
+export class ProductsTableComponent implements OnInit{
+
   @Input() products: Array<GetAllProductsResponse> = [];
   @Output() productEvent = new EventEmitter<EventAction>();
+  @Output() deleteProductEvent = new EventEmitter<DeleteProductAction>();
 
   public productSelected!: GetAllProductsResponse;
   public addProductEvent = ProductEvent.ADD_PRODUCT_EVENT;
@@ -23,9 +26,17 @@ export class ProductsTableComponent {
       this.productEvent.emit(productEventData);
     }
   }
-  handleDeleteProduct(product_id: string, productname: string): void {}
+  handleDeleteProduct(product_id: string, productName: string): void {
+    if(product_id !== '' && productName !== '') {
+      this.deleteProductEvent.emit({
+        product_id,
+        productName,
+      });
+    }
 
+  }
 
-
-  
+  ngOnInit(): void {
+    throw new Error('Method not implemented.');
+  }
 }
