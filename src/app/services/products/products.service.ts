@@ -1,3 +1,4 @@
+import { EditProductRequest } from './../../models/interfaces/products/request/EditProductRequest';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
@@ -53,4 +54,14 @@ export class ProductsService {
       this.httpOptions
     );
   }
+
+editProduct(requestDatas: EditProductRequest): Observable<void> {
+  return this.http.put<void>(
+    `${this.API_URL}/product/edit`,
+    requestDatas,
+    this.httpOptions
+    )
+  }
+
+
 }
