@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { Subject, takeUntil } from 'rxjs';
-import { ProductEvent } from 'src/app/models/enums/products/ProductEvent';
+import { ProductEvent} from 'src/app/models/enums/products/ProductEvent';
 import { GetCategoriesResponse } from 'src/app/models/interfaces/categories/responses/GetCategoriesResponse';
 import { EventAction } from 'src/app/models/interfaces/products/event/EventAction';
 import { CreateProductRequest } from 'src/app/models/interfaces/products/request/CreateProductRequest';
@@ -40,7 +40,11 @@ export class ProductFormComponent implements OnInit, OnDestroy {
     price: ['', Validators.required],
     description: ['', Validators.required],
     amount: [0, Validators.required],
+    category_id: ['', Validators.required],
   });
+
+  public saleProductSelected!: GetAllProductsResponse;
+  public renderDropdown = false;
 
   public addProductAction = ProductEvent.ADD_PRODUCT_EVENT;
   public editProductAction = ProductEvent.EDIT_PRODUCT_EVENT;
@@ -58,18 +62,11 @@ export class ProductFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.productAction = this.ref.data;
-
-    if (
-      this.productAction?.event?.action === this.editProductAction &&
-      this.productAction?.productDatas
-    ) {
-      this.getProductSelectedDatas(this.productAction?.event?.id as string);
-    }
-
     this.productAction?.event?.action === this.saleProductAction &&
       this.getProductDatas();
 
     this.getAllCategories();
+    this.renderDropdown = true;
   }
 
   getAllCategories(): void {
@@ -80,6 +77,12 @@ export class ProductFormComponent implements OnInit, OnDestroy {
         next: (response) => {
           if (response.length > 0) {
             this.categoriesDatas = response;
+            if (
+              this.productAction?.event?.action === this.editProductAction &&
+              this.productAction?.productDatas
+            ) {
+              this.getProductSelectedDatas(this.productAction?.event?.id as string);
+            }
           }
         },
       });
@@ -136,6 +139,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
         description: this.editProductForm.value.description as string,
         product_id: this.productAction?.event?.id,
         amount: this.editProductForm.value.amount as number,
+        category_id: this.editProductForm.value.category_id as string,
       };
 
       this.productsService
@@ -181,6 +185,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
           price: this.productSelectedDatas?.price,
           amount: this.productSelectedDatas?.amount,
           description: this.productSelectedDatas?.description,
+          category_id: this.productSelectedDatas?.category.id,
         });
       }
     }
