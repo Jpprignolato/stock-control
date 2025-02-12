@@ -1,29 +1,27 @@
-import { ProductsDataTransferService } from '../../../../services/products/products-data-transfer.service';
-import { ConfirmationService, MessageService } from 'primeng/api';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ProductsService } from '../../../../services/products/products.service';
 import { GetAllProductsResponse } from 'src/app/models/interfaces/products/response/GetAllProductsResponse';
 import { EventAction } from 'src/app/models/interfaces/products/event/EventAction';
-import { ExclamationTriangleIcon } from 'primeng/icons/exclamationtriangle';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ProductFormComponent } from '../../components/product-form/product-form.component';
+import { ProductsDataTransferService } from 'src/app/services/products/products-data-transfer.service';
 
 @Component({
   selector: 'app-products-home',
   templateUrl: './products-home.component.html',
-  styleUrls: []
+  styleUrls: [],
 })
-
 export class ProductsHomeComponent implements OnInit, OnDestroy {
   private readonly destroy$: Subject<void> = new Subject();
   private ref!: DynamicDialogRef;
-  public productsDatas: Array<GetAllProductsResponse> = []
+  public productsDatas: Array<GetAllProductsResponse> = [];
 
   constructor(
     private productsService: ProductsService,
-    private productsDataTransferService: ProductsDataTransferService,
+    private productsDtService: ProductsDataTransferService,
     private router: Router,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
@@ -35,14 +33,11 @@ export class ProductsHomeComponent implements OnInit, OnDestroy {
   }
 
   getServiceProductsDatas() {
+    const productsLoaded = this.productsDtService.getProductsDatas();
 
-    const productsLoaded = this.productsDataTransferService.getProductsDatas();
-
-    if(productsLoaded.length > 0) {
+    if (productsLoaded.length > 0) {
       this.productsDatas = productsLoaded;
     } else this.getAPIProductsDatas();
-
-    console.log('DADOS DE PRODUTOS', this.productsDatas);
   }
 
   getAPIProductsDatas() {
@@ -51,7 +46,7 @@ export class ProductsHomeComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          if(response.length > 0) {
+          if (response.length > 0) {
             this.productsDatas = response;
           }
         },
@@ -60,29 +55,29 @@ export class ProductsHomeComponent implements OnInit, OnDestroy {
           this.messageService.add({
             severity: 'error',
             summary: 'Erro',
-            detail: 'Erro ao buscar produtos!',
+            detail: 'Erro ao buscar produtos',
             life: 2500,
-          })
+          });
           this.router.navigate(['/dashboard']);
         },
-      })
+      });
   }
 
   handleProductAction(event: EventAction): void {
-    if(event) {
+    if (event) {
       this.ref = this.dialogService.open(ProductFormComponent, {
-          header: event?.action,
-          width: '70%',
-          contentStyle: {overflow: 'auto'},
-          baseZIndex: 10000,
-          maximizable: true,
-          data: {
-            event: event,
-            productsDatas: this.productsDatas,
-          },
-        });
-        this.ref.onClose.pipe(takeUntil(this.destroy$)).subscribe({
-          next: () => this.getAPIProductsDatas(),
+        header: event?.action,
+        width: '70%',
+        contentStyle: { overflow: 'auto' },
+        baseZIndex: 10000,
+        maximizable: true,
+        data: {
+          event: event,
+          productDatas: this.productsDatas,
+        },
+      });
+      this.ref.onClose.pipe(takeUntil(this.destroy$)).subscribe({
+        next: () => this.getAPIProductsDatas(),
       });
     }
   }
@@ -93,9 +88,9 @@ export class ProductsHomeComponent implements OnInit, OnDestroy {
   }): void {
     if (event) {
       this.confirmationService.confirm({
-        message: `Você deseja excluir o produto: ${event.productName}?`,
+        message: `Confirma a exclusão do produto: ${event?.productName}?`,
         header: 'Confirmação de exclusão',
-        icon: 'pi pi-ExclamationTriangleIcon',
+        icon: 'pi pi-exclamation-triangle',
         acceptLabel: 'Sim',
         rejectLabel: 'Não',
         accept: () => this.deleteProduct(event?.product_id),
@@ -106,31 +101,31 @@ export class ProductsHomeComponent implements OnInit, OnDestroy {
   deleteProduct(product_id: string) {
     if (product_id) {
       this.productsService
-      .deleteProduct(product_id)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if(response) {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Sucesso',
-              detail: 'Produto excluido com sucesso!',
-              life: 3000,
+        .deleteProduct(product_id)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response) {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Sucesso',
+                detail: 'Produto removido com sucesso!',
+                life: 2500,
               });
 
               this.getAPIProductsDatas();
-          }
-        },
-        error: (err) => {
-          console.log(err);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: 'Erro ao excluir produto!',
-            life: 2500,
-          });
-        },
-      });
+            }
+          },
+          error: (err) => {
+            console.log(err);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: 'Erro ao remover produto!',
+              life: 2500,
+            });
+          },
+        });
     }
   }
 
