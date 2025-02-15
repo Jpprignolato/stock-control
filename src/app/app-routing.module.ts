@@ -33,7 +33,7 @@ const routes: Routes = [
     loadChildren: () => import('./modules/categories/categories.module').then
     ((m) => m.CategoriesModule
   ),
-  canActivate: [AuthGuard]
+  canActivate: [AuthGuard],
   }
 ];
 
