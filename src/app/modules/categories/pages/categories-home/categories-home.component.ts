@@ -13,13 +13,12 @@ import { CategoryFormComponent } from '../../components/category-form/category-f
 @Component({
   selector: 'app-categories-home',
   templateUrl: './categories-home.component.html',
-  styleUrls: []
+  styleUrls: [],
 })
 export class CategoriesHomeComponent implements OnInit, OnDestroy {
   private readonly destroy$: Subject<void> = new Subject();
-  public ref!: DynamicDialogRef;
+  private ref!: DynamicDialogRef;
   public categoriesDatas: Array<GetCategoriesResponse> = [];
-
 
   constructor(
     private categoriesService: CategoriesService,
@@ -42,54 +41,60 @@ export class CategoriesHomeComponent implements OnInit, OnDestroy {
           if (response.length > 0) {
             this.categoriesDatas = response;
           }
-      }, error: (err) => {
-        console.log(err);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erro',
-          detail: 'Erro ao buscar categorias',
-          life: 2500,
-        });
+        },
+        error: (err) => {
+          console.log(err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Erro ao buscar categorias!',
+            life: 3000,
+          });
           this.router.navigate(['/dashboard']);
-        }
-     });
+        },
+      });
   }
 
   handleDeleteCategoryAction(event: DeleteCategoryAction): void {
     if (event) {
       this.confirmationService.confirm({
-        message: `Tem certeza que deseja excluir a categoria ${event?.categoryName}`,
-        header: 'Confirmação',
+        message: `Confirma a exclusão da categoria: ${event?.categoryName}`,
+        header: 'Confirmação de exclusão',
         icon: 'pi pi-exclamation-triangle',
         acceptLabel: 'Sim',
-        rejectLabel: 'Não',
-        accept: () => this.deleteCategory(event?. category_id),
-       });
-     }
+        rejectLabel: 'Não',
+        accept: () => this.deleteCategory(event?.category_id),
+      });
+    }
   }
 
-  deleteCategory(category_id: string): void{
+  deleteCategory(category_id: string): void {
     if (category_id) {
-      this.categoriesService.deleteCategory({ category_id })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Sucesso',
-            detail: 'Categoria deletada com sucesso',
-            life: 2500,
-          })
-        }, error: (err) => {
-          console.log(err);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: 'Erro ao deletar categoria',
-            life: 2500,
-          })
-        }
-      })
+      this.categoriesService
+        .deleteCategory({ category_id })
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            this.getAllCategories();
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Sucesso',
+              detail: 'Categoria removida com sucesso!',
+              life: 3000,
+            });
+          },
+          error: (err) => {
+            console.log(err);
+            this.getAllCategories();
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: 'Erro ao remover categoria!',
+              life: 3000,
+            });
+          },
+        });
+
       this.getAllCategories();
     }
   }
@@ -97,7 +102,7 @@ export class CategoriesHomeComponent implements OnInit, OnDestroy {
   handleCategoryAction(event: EventAction): void {
     if (event) {
       this.ref = this.dialogService.open(CategoryFormComponent, {
-        header: event.action,
+        header: event?.action,
         width: '70%',
         contentStyle: { overflow: 'auto' },
         baseZIndex: 10000,
@@ -109,7 +114,7 @@ export class CategoriesHomeComponent implements OnInit, OnDestroy {
 
       this.ref.onClose.pipe(takeUntil(this.destroy$)).subscribe({
         next: () => this.getAllCategories(),
-      })
+      });
     }
   }
 
@@ -117,5 +122,4 @@ export class CategoriesHomeComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
-
 }

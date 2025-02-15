@@ -26,18 +26,29 @@ import { CategoriesTableComponent } from './components/categories-table/categori
 import { CategoryFormComponent } from './components/category-form/category-form.component';
 
 @NgModule({
-  declarations: [
-    CategoriesHomeComponent,
-    CategoriesTableComponent,
-    CategoryFormComponent
-  ],
+  declarations: [CategoriesHomeComponent, CategoriesTableComponent, CategoryFormComponent],
   imports: [
-    CommonModule, FormsModule, ReactiveFormsModule, RouterModule.forChild(CATEGORIES_ROUTES), SharedModule,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule.forChild(CATEGORIES_ROUTES),
+    SharedModule,
     HttpClientModule,
-    //PrimeNG
-    CardModule, ButtonModule, TableModule, InputMaskModule, InputSwitchModule, InputTextModule, InputTextareaModule,
-    InputNumberModule, DynamicDialogModule, DropdownModule, ConfirmDialogModule,TooltipModule
+    // PrimeNg
+    CardModule,
+    ButtonModule,
+    TableModule,
+    InputMaskModule,
+    InputSwitchModule,
+    InputTextModule,
+    InputTextareaModule,
+    InputNumberModule,
+    DynamicDialogModule,
+    DropdownModule,
+    ConfirmDialogModule,
+    TooltipModule,
   ],
   providers: [DialogService, ConfirmationService],
 })
-export class CategoriesModule { }
+export class CategoriesModule {}
+

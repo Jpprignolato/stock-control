@@ -1,26 +1,29 @@
 <div class="grid">
   <div class="col-12">
-    <p-card styleClass="shadow-3 m-5 text-indigo-800" header="Categorias de Produtos">
+    <p-card
+      styleClass="shadow-3 m-5 text-indigo-800"
+      header="Categorias de produtos"
+    >
       <p-table
         [value]="categories"
-        [(selection)]="categoriesSelected"
+        [(selection)]="categorySelected"
         [rows]="10"
         [paginator]="true"
         [responsive]="true"
-        [tableStyle]="{'min-width': '75rem'}"
+        [tableStyle]="{ 'min-width': '75rem' }"
         [rowHover]="true"
         [showCurrentPageReport]="true"
         dataKey="id"
-        currentPageReportTemplate="Mostrando {first} de {last} de {totalRecords} categorias"
+        currentPageReportTemplate="Mostrando {first} de {last} de {totalRecords} produtos"
       >
         <ng-template pTemplate="header">
           <tr>
             <th pSortableColumn="name">
-              <div class="flex align-items-center justify-content-between">
-                <div class="flex align-items-center">
+              <div class="flex justify-content-between align-items-center">
+                <div class="flex justify-content-between align-items-center">
                   Nome
                 </div>
-                <div class="flex justify-content-between align-content-center">
+                <div class="flex justify-content-between align-items-center">
                   <p-sortIcon field="name"></p-sortIcon>
                   <p-columnFilter
                     type="text"
@@ -35,11 +38,13 @@
               </div>
             </th>
             <th>
-              <div class="flex-justify-content-center">
+              <div class="flex justify-content-center">
                 <p-button
                   styleClass="p-button-info"
                   icon="pi pi-plus"
                   label="Adicionar"
+                  pTooltip="Adicionar Categoria"
+                  tooltipPosition="top"
                   (onClick)="handleCategoryEvent(addCategoryAction)"
                 ></p-button>
               </div>
@@ -51,23 +56,35 @@
           <tr>
             <td>{{ category?.name }}</td>
             <td>
-              <div class="flex justify-content-center gap-3 align-content-center align-items-center"
+              <div
+                class="flex justify-content-center gap-3 align-content-center align-items-center"
               >
                 <button
                   pButton
                   pRipple
                   icon="pi pi-pencil"
+                  pTooltip="Editar Categoria"
+                  tooltipPosition="top"
                   class="p-button-rounded p-button-warning"
+                  (click)="
+                    handleCategoryEvent(
+                      editCategoryAction,
+                      category?.id,
+                      category?.name
+                    )
+                  "
                 ></button>
                 <button
-                pButton
-                pRipple
-                icon="pi pi-trash"
-                pTooltip="Remover categoria"
-                tooltipPosition="top"
-                class="p-button-rounded p-button-danger"
-                (click)="handleDeleteCategoryEvent(category?.id, category?.name)"
-              ></button>
+                  pButton
+                  pRipple
+                  icon="pi pi-trash"
+                  pTooltip="Remover Categoria"
+                  tooltipPosition="top"
+                  class="p-button-rounded p-button-danger"
+                  (click)="
+                    handleDeleteCategoryEvent(category?.id, category?.name)
+                  "
+                ></button>
               </div>
             </td>
           </tr>
@@ -75,5 +92,5 @@
       </p-table>
     </p-card>
   </div>
-  <p-confirmDialog [style]="{width: '50vw' }"></p-confirmDialog>
+  <p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
 </div>

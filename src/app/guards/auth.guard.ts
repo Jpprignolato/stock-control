@@ -4,21 +4,22 @@ import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTr
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class AuthGuard implements CanActivate {
+export class AuthGuard {
+  constructor(private userService: UserService, private router: Router) {}
 
-  constructor(private UserService: UserService, private router: Router) {}
+  canActivate():
+    | Observable<boolean | UrlTree>
+    | Promise<boolean | UrlTree>
+    | boolean
+    | UrlTree {
+    if (!this.userService.isLoggedIn()) {
+      this.router.navigate(['/home']);
+      return false;
+    }
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-      if(!this.UserService.isLoggedIn()) {
-        this.router.navigate(['/home']);
-        return false;
-  }
-
-  this.UserService.isLoggedIn();
-  return true;
+    this.userService.isLoggedIn();
+    return true;
   }
 }

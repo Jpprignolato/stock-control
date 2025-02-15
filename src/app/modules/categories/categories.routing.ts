@@ -6,7 +6,5 @@ export const CATEGORIES_ROUTES: Routes = [
   {
     path: '',
     component: CategoriesHomeComponent,
-
   },
-
 ];
