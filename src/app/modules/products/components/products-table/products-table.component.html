@@ -139,7 +139,7 @@
           [pTooltip]="product?.description"
           tooltipPosition="top"
         >
-        {{ product?.description }}
+        {{ product?.description | shorten: 25  }}
       </td>
       <td>{{ product?.category?.name }}</td>
       <td>
